@@ -216,3 +216,4 @@ TEST(ExecutorTest, should_return_facing_W_given_command_is_R_and_facing_is_S)
 }
 
 } // namespace adas
+

@@ -20,6 +20,28 @@ namespace adas
     {
         return new (std::nothrow) ExecutorImpl(pose); // 只在C++17下有效
     }
+
+    // 🌟 新增：Move 函数的具体实现
+    void ExecutorImpl::Move(void) noexcept
+    {
+        if (pose.heading == 'E')
+        {
+            ++pose.x;
+        }
+        else if (pose.heading == 'W')
+        {
+            --pose.x;
+        }
+        else if (pose.heading == 'N')
+        {
+            ++pose.y;
+        }
+        else if (pose.heading == 'S')
+        {
+            --pose.y;
+        }
+    }
+
     void ExecutorImpl::Execute(const std::string &commands) noexcept
     {
         // 遍历commands里面的每个指令cmd
@@ -28,23 +50,7 @@ namespace adas
             // 如果是'M'指令
             if (cmd == 'M')
             {
-                // 如果是'M'指令，则需要根据当前汽车姿势的heading（朝向）决定如何移动车辆（重新计算坐标）
-                if (pose.heading == 'E')
-                {
-                    ++pose.x;
-                }
-                else if (pose.heading == 'W')
-                {
-                    --pose.x;
-                }
-                else if (pose.heading == 'N')
-                {
-                    ++pose.y;
-                }
-                else if (pose.heading == 'S')
-                {
-                    --pose.y;
-                }
+                Move(); // 👈 修改：这里直接调用 Move()，逻辑更清晰
             }
             else if (cmd == 'L')
             {
