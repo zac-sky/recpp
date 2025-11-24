@@ -10,7 +10,7 @@ namespace adas
     // 重载Pose的==，用于比较两个姿态对象是不是相等
     bool operator==(const Pose &lhs, const Pose &rhs)
     {
-       return std::tie(lhs.x, lhs.y, lhs.heading) == std::tie(rhs.x, rhs.y, rhs.heading);
+        return std::tie(lhs.x, lhs.y, lhs.heading) == std::tie(rhs.x, rhs.y, rhs.heading);
     }
 
     // 下面两个测试用例，测试静态方法Executor::NewExecutor
@@ -46,16 +46,18 @@ namespace adas
         const Pose target{0, 0, 'N'};
         ASSERT_EQ(target, executor->Query());
     }
+
+    // 【修复点】：这个测试用例被移入了 adas 命名空间内部
+    TEST(ExecutorTest, should_return_x_plus_1_given_command_is_M_and_facing_is_E)
+    {
+        // given 给定一个executor
+        std::unique_ptr<Executor> executor(Executor::NewExecutor({0, 0, 'E'})); // 给了初始姿势：当前朝向是E，起点(0, 0)
+
+        // when 调用executor的Execute方法去执行指令
+        executor->Execute("M");
+
+        // then
+        const Pose target{1, 0, 'E'};         // 如果执行指令正确，新的姿势应该是target：{1, 0, 'E'}
+        ASSERT_EQ(target, executor->Query()); // 当指令执行完，executor->Query()返回的汽车姿势应该等于target：{1, 0, 'E'}
+    }
 } // namespace adas
-TEST(ExecutorTest, should_return_x_plus_1_given_command_is_M_and_facing_is_E)
-{
-    // given 给定一个executor
-    std::unique_ptr<Executor> executor(Executor::NewExecutor({0, 0, 'E'})); // 给了初始姿势：当前朝向是E，起点(0, 0)
-
-    // when 调用executor的Execute方法去执行指令
-    executor->Execute("M");
-
-    // then
-    const Pose target{1, 0, 'E'};         // 如果执行指令正确，新的姿势应该是target：{1, 0, 'E'}
-    ASSERT_EQ(target, executor->Query()); // 当指令执行完，executor->Query()返回的汽车姿势应该等于target：{1, 0, 'E'}
-}
