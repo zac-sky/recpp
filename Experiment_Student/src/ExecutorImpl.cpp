@@ -43,7 +43,7 @@ namespace adas
     }
 
     // 🆕 新增：TurnLeft 函数的具体实现
-   /* void ExecutorImpl::TurnLeft(void) noexcept
+    void ExecutorImpl::TurnLeft(void) noexcept
     {
         // L 指令：左转
         if (pose.heading == 'E') // 东 (E) 左转到 北 (N)
@@ -62,7 +62,7 @@ namespace adas
         {
             pose.heading = 'E';
         }
-    }*/
+    }
 
     // 🆕 新增：TurnRight 函数的具体实现
     void ExecutorImpl::TurnRight(void) noexcept
