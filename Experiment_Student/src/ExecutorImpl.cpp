@@ -21,7 +21,7 @@ namespace adas
         return new (std::nothrow) ExecutorImpl(pose); // 只在C++17下有效
     }
 
-    // 🌟 新增：Move 函数的具体实现
+    // 🌟 已有：Move 函数的具体实现
     void ExecutorImpl::Move(void) noexcept
     {
         if (pose.heading == 'E')
@@ -42,6 +42,50 @@ namespace adas
         }
     }
 
+    // 🆕 新增：TurnLeft 函数的具体实现
+    void ExecutorImpl::TurnLeft(void) noexcept
+    {
+        // L 指令：左转
+        if (pose.heading == 'E') // 东 (E) 左转到 北 (N)
+        {
+            pose.heading = 'N';
+        }
+        else if (pose.heading == 'N') // 北 (N) 左转到 西 (W)
+        {
+            pose.heading = 'W';
+        }
+        else if (pose.heading == 'W') // 西 (W) 左转到 南 (S)
+        {
+            pose.heading = 'S';
+        }
+        else if (pose.heading == 'S') // 南 (S) 左转到 东 (E)
+        {
+            pose.heading = 'E';
+        }
+    }
+
+    // 🆕 新增：TurnRight 函数的具体实现
+    void ExecutorImpl::TurnRight(void) noexcept
+    {
+        // R 指令：右转
+        if (pose.heading == 'E') // 东 (E) 右转到 南 (S)
+        {
+            pose.heading = 'S';
+        }
+        else if (pose.heading == 'S') // 南 (S) 右转到 西 (W)
+        {
+            pose.heading = 'W';
+        }
+        else if (pose.heading == 'W') // 西 (W) 右转到 北 (N)
+        {
+            pose.heading = 'N';
+        }
+        else if (pose.heading == 'N') // 北 (N) 右转到 东 (E)
+        {
+            pose.heading = 'E';
+        }
+    }
+
     void ExecutorImpl::Execute(const std::string &commands) noexcept
     {
         // 遍历commands里面的每个指令cmd
@@ -50,47 +94,15 @@ namespace adas
             // 如果是'M'指令
             if (cmd == 'M')
             {
-                Move(); // 👈 修改：这里直接调用 Move()，逻辑更清晰
+                Move(); // 封装后的调用
             }
             else if (cmd == 'L')
             {
-                // L 指令：左转
-                if (pose.heading == 'E') // 东 (E) 左转到 北 (N)
-                {
-                    pose.heading = 'N';
-                }
-                else if (pose.heading == 'N') // 北 (N) 左转到 西 (W)
-                {
-                    pose.heading = 'W';
-                }
-                else if (pose.heading == 'W') // 西 (W) 左转到 南 (S)
-                {
-                    pose.heading = 'S';
-                }
-                else if (pose.heading == 'S') // 南 (S) 左转到 东 (E)
-                {
-                    pose.heading = 'E';
-                }
+                TurnLeft(); // 封装后的调用
             }
             else if (cmd == 'R')
             {
-                // R 指令：右转
-                if (pose.heading == 'E') // 东 (E) 右转到 南 (S)
-                {
-                    pose.heading = 'S';
-                }
-                else if (pose.heading == 'S') // 南 (S) 右转到 西 (W)
-                {
-                    pose.heading = 'W';
-                }
-                else if (pose.heading == 'W') // 西 (W) 右转到 北 (N)
-                {
-                    pose.heading = 'N';
-                }
-                else if (pose.heading == 'N') // 北 (N) 右转到 东 (E)
-                {
-                    pose.heading = 'E';
-                }
+                TurnRight(); // 封装后的调用
             }
         }
     }

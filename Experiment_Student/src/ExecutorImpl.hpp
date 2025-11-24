@@ -31,5 +31,7 @@ namespace adas
         // 私有数据成员，汽车当前姿态
         Pose pose;
         void Move(void) noexcept;
+        void TurnLeft(void) noexcept;
+        void TurnRight(void) noexcept;
     };
 } // namespace adas
