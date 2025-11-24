@@ -20,6 +20,16 @@ namespace adas
         }
     };
 
- 
+    // --- 2. TurnLeft 命令 ---
+    class TurnLeftCommand final : public ICommand
+    {
+    public:
+        void Execute(ExecutorImpl &executor) override
+        {
+            // 左转命令的执行，只需要调用 ExecutorImpl 里封装好的 TurnLeft() 方法
+            executor.TurnLeft();
+        }
+    };
+
 
 } // namespace adas
