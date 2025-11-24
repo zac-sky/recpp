@@ -46,6 +46,26 @@ namespace adas
                     --pose.y;
                 }
             }
+            else if (cmd == 'L')
+            {
+                // L 指令：左转
+                if (pose.heading == 'E') // 东 (E) 左转到 北 (N)
+                {
+                    pose.heading = 'N';
+                }
+                else if (pose.heading == 'N') // 北 (N) 左转到 西 (W)
+                {
+                    pose.heading = 'W';
+                }
+                else if (pose.heading == 'W') // 西 (W) 左转到 南 (S)
+                {
+                    pose.heading = 'S';
+                }
+                else if (pose.heading == 'S') // 南 (S) 左转到 东 (E)
+                {
+                    pose.heading = 'E';
+                }
+            }
         }
     }
 }
