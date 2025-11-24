@@ -17,7 +17,8 @@ namespace adas
     {
     public:
         // Caller should delete *executor when it is no longer needed.
-        static Executor *NewExecutor(const Pose *pose = {0, 0, 'N'}) noexcept;
+        // 【修改点】：将 const Pose *pose 改为 const Pose &pose，并修正默认参数语法。
+        static Executor *NewExecutor(const Pose &pose = Pose{0, 0, 'N'}) noexcept;
 
     public:
         // 默认构造函数
