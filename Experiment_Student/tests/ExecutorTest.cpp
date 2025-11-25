@@ -1,17 +1,13 @@
 #include <gtest/gtest.h>
 #include <memory>
-#include <tuple>
+//#include <tuple>
 #include "Executor.hpp"
-
+#include "PoseEq.hpp"
 // 一个测试套件，用第一名字相见
 
 namespace adas
 {
     // 重载Pose的==，用于比较两个姿态对象是不是相等
-    bool operator==(const Pose &lhs, const Pose &rhs)
-    {
-        return std::tie(lhs.x, lhs.y, lhs.heading) == std::tie(rhs.x, rhs.y, rhs.heading);
-    }
 
     // 下面两个测试用例，测试静态方法Executor::NewExecutor
 

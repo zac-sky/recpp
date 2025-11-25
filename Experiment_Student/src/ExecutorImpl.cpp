@@ -113,10 +113,6 @@ namespace adas
         return isfast;
     }
 
-    // =========================================================================
-    // Execute 方法实现 (已修正变量名)
-    // =========================================================================
-
     void ExecutorImpl::Execute(const std::string &commands) noexcept
     {
         // 修正：将 'command' 修正为函数参数 'commands'
