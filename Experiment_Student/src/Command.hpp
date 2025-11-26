@@ -1,49 +1,53 @@
-#pragma once
-#include "ExecutorImpl.hpp"
+// Command.hpp (最终修正版 - 对应 PPT image_682f72.png)
 
-namespace adas{
+#pragma once
+#include "PoseHandler.hpp" // 🆕 依赖 PoseHandler，而不是 ExecutorImpl
+
+namespace adas
+{
     // 定义一个虚基类ICommand，完成DoOperate动作
     class ICommand
     {
     public:
-        virtual void DoOperate(ExecutorImpl &executor) const noexcept = 0;
+        // 🆕 核心修改：签名改为接受 PoseHandler 引用
+        virtual void DoOperate(PoseHandler &poseHandler) const noexcept = 0;
         virtual ~ICommand() noexcept = default;
     };
+
     // 定义一个嵌套类MoveCommand，完成Move动作
     class MoveCommand final : public ICommand
     {
     public:
-        void DoOperate(ExecutorImpl &executor) const noexcept override
+        void DoOperate(PoseHandler &poseHandler) const noexcept override
         {
-            // 正确：只需要调用一次 Move()
-            // Move() 方法会根据 isFast() 的状态来移动 1 步或 2 步。
-            executor.Move();
+            // 修正：直接调用 PoseHandler 的方法
+            poseHandler.Move();
         }
     };
-    // 定义一个嵌套类TurnLeftCommand，完成TurnLeft动作
+
     // 定义一个嵌套类TurnLeftCommand，完成TurnLeft动作
     class TurnLeftCommand final : public ICommand
     {
     public:
-        void DoOperate(ExecutorImpl &executor) const noexcept override
+        void DoOperate(PoseHandler &poseHandler) const noexcept override
         {
-            if (executor.isFast())        // 检查是否处于 Fast 状态
-                executor.MoveByOneStep(); // 🆕 预期在这里调用移动1步的私有方法
+            if (poseHandler.IsFast())        // 修正：调用 PoseHandler::IsFast()
+                poseHandler.MoveByOneStep(); // 修正：调用 PoseHandler::MoveByOneStep()
 
-            executor.TurnLeft();
+            poseHandler.TurnLeft(); // 修正：调用 PoseHandler::TurnLeft()
         }
     };
-    // 定义一个嵌套类TurnRightCommand，完成TurnRight动作
+
     // 定义一个嵌套类TurnRightCommand，完成TurnRight动作
     class TurnRightCommand final : public ICommand
     {
     public:
-        void DoOperate(ExecutorImpl &executor) const noexcept override
+        void DoOperate(PoseHandler &poseHandler) const noexcept override
         {
-            if (executor.isFast())        // 检查是否处于 Fast 状态
-                executor.MoveByOneStep(); // 🆕 预期在这里调用移动1步的私有方法
+            if (poseHandler.IsFast())        // 修正：调用 PoseHandler::IsFast()
+                poseHandler.MoveByOneStep(); // 修正：调用 PoseHandler::MoveByOneStep()
 
-            executor.TurnRight();
+            poseHandler.TurnRight(); // 修正：调用 PoseHandler::TurnRight()
         }
     };
 
@@ -51,9 +55,10 @@ namespace adas{
     class FastCommand final : public ICommand
     {
     public:
-        void DoOperate(ExecutorImpl &executor) const noexcept override
+        void DoOperate(PoseHandler &poseHandler) const noexcept override
         {
-            executor.Fast();
+            // 修正：直接调用 PoseHandler 的方法
+            poseHandler.Fast();
         }
     };
 }

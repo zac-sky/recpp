@@ -1,131 +1,37 @@
+// ExecutorImpl.cpp (最终修正版)
+
 #include "ExecutorImpl.hpp"
 #include "Command.hpp"
 #include <new>
 #include <memory>
-#include <iostream> // 建议添加，用于调试输出 Fast 状态变化等信息
+#include <iostream>
 
 namespace adas
 {
 
-    ExecutorImpl::ExecutorImpl(const Pose &pose) noexcept : pose(pose)
+    // 🆕 构造函数：使用传入的 pose 初始化 poseHandler
+    ExecutorImpl::ExecutorImpl(const Pose &pose) noexcept : poseHandler(pose)
     {
         // 可以在此处添加构造日志
     }
 
+    // 🆕 Query：委托给 poseHandler 的 Query 方法
     Pose ExecutorImpl::Query(void) const noexcept
     {
-        return pose;
+        return poseHandler.Query();
     }
 
     Executor *Executor::NewExecutor(const Pose &pose) noexcept
     {
-        // 确保 NewExecutor 方法在 Executor 抽象基类中被声明为静态方法
         return new (std::nothrow) ExecutorImpl(pose);
     }
-    void adas::ExecutorImpl::MoveByOneStep(void) noexcept
-    {
-        // 强制移动 1 步
-        if (pose.heading == 'E')
-        {
-            pose.x += 1;
-        }
-        else if (pose.heading == 'W')
-        {
-            pose.x -= 1;
-        }
-        else if (pose.heading == 'N')
-        {
-            pose.y += 1;
-        }
-        else if (pose.heading == 'S')
-        {
-            pose.y -= 1;
-        }
-    }
-    void ExecutorImpl::Move(void) noexcept
-    {
-        if (pose.heading == 'E')
-        {
-            // 在 Fast 状态下，额外移动一次
-            pose.x += (isFast() ? 2 : 1);
-        }
-        else if (pose.heading == 'W')
-        {
-            pose.x -= (isFast() ? 2 : 1);
-        }
-        else if (pose.heading == 'N')
-        {
-            pose.y += (isFast() ? 2 : 1);
-        }
-        else if (pose.heading == 'S')
-        {
-            pose.y -= (isFast() ? 2 : 1);
-        }
-    }
 
-    void ExecutorImpl::TurnLeft(void) noexcept
-    {
-        // L 指令：左转
-        if (pose.heading == 'E')
-        {
-            pose.heading = 'N';
-        }
-        else if (pose.heading == 'N')
-        {
-            pose.heading = 'W';
-        }
-        else if (pose.heading == 'W')
-        {
-            pose.heading = 'S';
-        }
-        else if (pose.heading == 'S')
-        {
-            pose.heading = 'E';
-        }
-    }
-
-    // 🆕 已有：TurnRight 函数的具体实现
-    void ExecutorImpl::TurnRight(void) noexcept
-    {
-        // R 指令：右转
-        if (pose.heading == 'E')
-        {
-            pose.heading = 'S';
-        }
-        else if (pose.heading == 'S')
-        {
-            pose.heading = 'W';
-        }
-        else if (pose.heading == 'W')
-        {
-            pose.heading = 'N';
-        }
-        else if (pose.heading == 'N')
-        {
-            pose.heading = 'E';
-        }
-    }
-
-    // 🆕 新增：Fast 函数的具体实现
-    void ExecutorImpl::Fast(void) noexcept
-    {
-        // 切换 Fast 状态
-        isfast = !isfast;
-        // std::cout << "Fast state toggled to: " << (isfast ? "true" : "false") << std::endl;
-    }
-
-    // 🆕 新增：isFast 函数的具体实现
-    bool ExecutorImpl::isFast(void) const noexcept
-    {
-        return isfast;
-    }
+    // ⚠️ 删除了 MoveByOneStep, Move, TurnLeft, TurnRight, Fast, isFast 的实现
 
     void ExecutorImpl::Execute(const std::string &commands) noexcept
     {
-        // 修正：将 'command' 修正为函数参数 'commands'
         for (const auto cmd : commands)
         {
-            // ICommand 等嵌套类可以在成员函数内部直接访问，无需 ExecutorImpl:: 限定
             std::unique_ptr<ICommand> cmder;
 
             if (cmd == 'M')
@@ -138,7 +44,8 @@ namespace adas
                 cmder = std::make_unique<FastCommand>();
 
             if (cmder)
-                cmder->DoOperate(*this);
+                // 🆕 核心修改：Execute 方法将 PoseHandler 传递给 DoOperate
+                cmder->DoOperate(poseHandler); // **注意：这里需要修改 ICommand::DoOperate 的签名**
         }
     }
 }

@@ -1,7 +1,10 @@
+// ExecutorImpl.hpp (最终修正版)
+
 #pragma once
 
 #include "Executor.hpp"
 #include <string>
+#include "PoseHandler.hpp" // 🆕 添加对 PoseHandler 的依赖
 
 namespace adas
 {
@@ -26,23 +29,10 @@ namespace adas
         // 通过命令执行驾驶动作,是父类抽象方法Execute的具体实现
         void Execute(const std::string &command) noexcept override;
 
-    public:
-        // 当前汽车姿态
-        Pose pose;
-        // 是否为Fast状态
-        bool isfast{false};
-        void MoveByOneStep(void) noexcept;
+    private:
+        // 🆕 包含 PoseHandler 对象，管理状态
+        PoseHandler poseHandler;
 
-        // 移动方法
-        void Move(void) noexcept;
-        // 左转方法
-        void TurnLeft(void) noexcept;
-        // 右转方法
-        void TurnRight(void) noexcept;
-        // 改变Fast状态
-        void Fast(void) noexcept;
-        // 查询是否为Fast状态
-        bool isFast(void) const noexcept;
-
+        // ⚠️ 删除了 pose, isfast, MoveByOneStep, Move, TurnLeft, TurnRight, Fast, isFast 方法和成员
     };
 }
