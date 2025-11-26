@@ -1,21 +1,21 @@
-// ExecutorImpl.cpp (最终修正版)
+// src/ExecutorImpl.cpp
 
 #include "ExecutorImpl.hpp"
 #include "Command.hpp"
 #include <new>
 #include <memory>
 #include <iostream>
+#include <unordered_map> // 🆕 1. 添加 unordered_map 头文件
 
 namespace adas
 {
 
-    // 🆕 构造函数：使用传入的 pose 初始化 poseHandler
+    // 构造函数：使用传入的 pose 初始化 poseHandler
     ExecutorImpl::ExecutorImpl(const Pose &pose) noexcept : poseHandler(pose)
     {
-        // 可以在此处添加构造日志
     }
 
-    // 🆕 Query：委托给 poseHandler 的 Query 方法
+    // Query：委托给 poseHandler 的 Query 方法
     Pose ExecutorImpl::Query(void) const noexcept
     {
         return poseHandler.Query();
@@ -26,26 +26,32 @@ namespace adas
         return new (std::nothrow) ExecutorImpl(pose);
     }
 
-    // ⚠️ 删除了 MoveByOneStep, Move, TurnLeft, TurnRight, Fast, isFast 的实现
-
+    // 🆕 修改后的 Execute 方法：使用表驱动替代 if-else
     void ExecutorImpl::Execute(const std::string &commands) noexcept
     {
+        // 2. 建立指令和对应操作类的映射 (表驱动)
+        // Key 是指令字符 (char), Value 是指令对象的智能指针 (unique_ptr)
+        std::unordered_map<char, std::unique_ptr<ICommand>> cmderMap;
+
+        // 建立操作 M, L, R, F 的映射关系
+        cmderMap.emplace('M', std::make_unique<MoveCommand>());
+        cmderMap.emplace('L', std::make_unique<TurnLeftCommand>());
+        cmderMap.emplace('R', std::make_unique<TurnRightCommand>());
+        cmderMap.emplace('F', std::make_unique<FastCommand>());
+
+        // 3. 遍历指令并执行
         for (const auto cmd : commands)
         {
-            std::unique_ptr<ICommand> cmder;
+            // 根据操作查找表驱动
+            const auto it = cmderMap.find(cmd);
 
-            if (cmd == 'M')
-                cmder = std::make_unique<MoveCommand>();
-            else if (cmd == 'L')
-                cmder = std::make_unique<TurnLeftCommand>();
-            else if (cmd == 'R')
-                cmder = std::make_unique<TurnRightCommand>();
-            else if (cmd == 'F')
-                cmder = std::make_unique<FastCommand>();
-
-            if (cmder)
-                // 🆕 核心修改：Execute 方法将 PoseHandler 传递给 DoOperate
-                cmder->DoOperate(poseHandler); // **注意：这里需要修改 ICommand::DoOperate 的签名**
+            // 如果找到表驱动 (it != end)，执行操作对应的指令
+            if (it != cmderMap.end())
+            {
+                // it->second 是 unique_ptr<ICommand>
+                // 调用 DoOperate 并传入 poseHandler
+                it->second->DoOperate(poseHandler);
+            }
         }
     }
 }
