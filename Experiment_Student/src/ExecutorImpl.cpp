@@ -1,5 +1,5 @@
 #include "ExecutorImpl.hpp"
-
+#include "Command.hpp"
 #include <new>
 #include <memory>
 #include <iostream> // 建议添加，用于调试输出 Fast 状态变化等信息
