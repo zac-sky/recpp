@@ -6,9 +6,6 @@
 
 namespace adas
 {
-    // =========================================================================
-    // 公有方法实现
-    // =========================================================================
 
     ExecutorImpl::ExecutorImpl(const Pose &pose) noexcept : pose(pose)
     {
@@ -20,20 +17,31 @@ namespace adas
         return pose;
     }
 
-    /*
-     * 静态工厂方法：使用 new (std::nothrow) 确保内存分配失败时返回空指针而非抛出异常。
-     */
     Executor *Executor::NewExecutor(const Pose &pose) noexcept
     {
         // 确保 NewExecutor 方法在 Executor 抽象基类中被声明为静态方法
         return new (std::nothrow) ExecutorImpl(pose);
     }
-
-    // =========================================================================
-    // 私有动作方法实现
-    // =========================================================================
-
-    // 🌟 已有：Move 函数的具体实现
+    void adas::ExecutorImpl::MoveByOneStep(void) noexcept
+    {
+        // 强制移动 1 步
+        if (pose.heading == 'E')
+        {
+            pose.x += 1;
+        }
+        else if (pose.heading == 'W')
+        {
+            pose.x -= 1;
+        }
+        else if (pose.heading == 'N')
+        {
+            pose.y += 1;
+        }
+        else if (pose.heading == 'S')
+        {
+            pose.y -= 1;
+        }
+    }
     void ExecutorImpl::Move(void) noexcept
     {
         if (pose.heading == 'E')
@@ -55,7 +63,6 @@ namespace adas
         }
     }
 
-    // 🆕 已有：TurnLeft 函数的具体实现
     void ExecutorImpl::TurnLeft(void) noexcept
     {
         // L 指令：左转
